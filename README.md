@@ -320,6 +320,10 @@ This program would not be possible without [remark](https://www.npmjs.com/packag
 
 ## Changelog
 
+**0.0.1**
+
+-   Moved `fn-to-cli` from dev dependencies to dependencies.
+
 **0.0.0**
 
 -   Published the package in npm.

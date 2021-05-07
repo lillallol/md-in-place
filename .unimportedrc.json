@@ -2,6 +2,9 @@
     "entry": [
         "src/index.ts"
     ],
+    "ignoreUnused"  : [
+        "fn-to-cli"
+    ],
     "ignoreUnimported": [
         "src/index.ts",
         "src/**/*.{test,mock}.ts"

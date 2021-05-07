@@ -1,0 +1,12 @@
+{
+    "entry": [
+        "src/index.ts"
+    ],
+    "ignoreUnimported": [
+        "src/index.ts",
+        "src/**/*.{test,mock}.ts"
+    ],
+    "ignorePatterns": [
+        "**/node_modules/**"
+    ]
+}

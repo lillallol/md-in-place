@@ -1,0 +1,23 @@
+{
+    "language": "en",
+    "ignorePaths": [
+        "dist/**",
+        "node_modules/**",
+        "package-lock.json",
+        "jest.config.js",
+        "coverage/**",
+        "bin/**",
+        "TBD/**",
+        "TODO.md",
+        "prettier.config.js",
+        "cspell.json"
+    ],
+    "words": [
+        "endregion",
+        "rehype",
+        "lillallol",
+        "unimported",
+        "npmjs",
+        "unimportedrc"
+    ]
+}

@@ -1,6 +1,6 @@
 # md-in-place
 
-> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. Even then you might lose sections of your markdown file since this program is not battle tested and bugs can occur. However I personally trust it and use it to create the `README.md` file of of my own projects and have not encountered any unwanted results. Use on your own risk.
+> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. Even then you might lose sections of your markdown file since this program is not battle tested and bugs can occur. However I personally trust it and use it to create the `README.md` file of my own projects and have not encountered any unwanted results. Use on your own risk.
 
 ## Table of contents
 

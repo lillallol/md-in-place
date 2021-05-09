@@ -10,3 +10,18 @@ export type parsedHeading = {
 };
 
 export type parsedComment = ParsedEndComment | ParsedStartComment | ParsedStartTocComment | ParsedEndTocComment;
+
+export type astNode = {
+    type: "html" | "heading";
+    position: {
+        start: {
+            line: number;
+            offset: number;
+        };
+        end: {
+            line: number;
+            offset: number;
+        };
+    };
+    children: astNode[];
+};

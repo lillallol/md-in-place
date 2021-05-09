@@ -18,14 +18,13 @@ export function templateStringsArray(md: string, parsedComments: parsedComment[]
                 templateStringsArray.push(md.slice(i, endOffset));
             }
             if (ii % 2 === 1) {
-                const { startOffset } = parsedComments[ii];
-                i = startOffset;
+                const { startOffset, indent } = parsedComments[ii];
+                i = startOffset - indent.length;
             }
         }
 
         templateStringsArray.push(md.slice(i, md.length));
     }
-
 
     return templateStringsArray;
 }

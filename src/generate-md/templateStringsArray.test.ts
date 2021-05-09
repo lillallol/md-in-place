@@ -44,4 +44,24 @@ describe(templateStringsArray.name, () => {
             `,
         ]);
     });
+    it("works for indented comment",() => {
+        const md = tagUnindent`
+            -   a list for indentation
+
+                <!--#region toc-->
+
+                    to be deleted
+
+                <!--#endregion toc-->
+        `;
+        const parsedComments = parseCommentsFromMd(md, process.cwd());
+        expect(templateStringsArray(md, parsedComments)).toEqual([
+            tagUnindent`
+            -   a list for indentation
+
+                <!--#region toc-->
+            `,
+            "    <!--#endregion toc-->"
+        ]);
+    })
 });

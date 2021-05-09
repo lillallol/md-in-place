@@ -1,6 +1,6 @@
 # md-in-place
 
-> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. Even then you might lose sections of your markdown file since this program is not battle tested and bugs can occur. However I personally trust it and use it in my own projects and have not encountered any unwanted results. Use on your own risk.
+> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. Even then you might lose sections of your markdown file since this program is not battle tested and bugs can occur. However I personally trust it and use it to create the `README.md` file of of my own projects and have not encountered any unwanted results. Use on your own risk.
 
 ## Table of contents
 
@@ -10,6 +10,7 @@
     - [Table of contents](#table-of-contents)
     - [Installation](#installation)
     - [Description](#description)
+    - [Code coverage](#code-coverage)
     - [Example](#example)
     - [Documentation](#documentation)
         - [Toc generation](#toc-generation)
@@ -17,7 +18,6 @@
         - [Links with relative paths](#links-with-relative-paths)
         - [More on special comments](#more-on-special-comments)
     - [Best practices](#best-practices)
-    - [Motivation](#motivation)
     - [Contributing](#contributing)
         - [How it works](#how-it-works)
         - [Limitations](#limitations)
@@ -35,76 +35,118 @@ npm install --save-dev md-in-place
 
 ## Description
 
-Node.js CLI executable that injects in place the provided github flavoured markdown, with file imports and auto generated toc. The injection regions and imported files are specified via special html comments inside the markdown file. Useful for creating `README.md` files that work for both github and npmjs. Testing code coverage is around 90%.
+Node.js CLI executable that enables imports for markdown files.
+
+## Code coverage
+
+Testing code coverage is around 90%.
 
 ## Example
 
-The input file in path `./input.md`:
+1.  Create a new folder and set it as your current working directory:
 
-```md
-## Table of contents
+    ```bash
+    mkdir example; cd ./example;
+    ```
 
-<!--#region toc-->
+2.  Initialize the folder as an npm package and install `md-in-place` as a development dependency:
 
-<!--#endregion toc-->
+    ```bash
+    npm init -y;
+    npm install --save-dev md-in-place;
+    ```
 
-## Documentation
+3.  Create the file `./README.md` with the following content:
 
-<!--#region keyword ./relative/path/to/documentation.md-->
+    <!--#region example-readme-md !./src/example/README.before.md-->
 
-<!--#endregion keyword-->
+    ```md
+    # Example
+    
+    ## Table of contents
+    
+    <!--#region toc-->
+    
+    <!--#endregion toc-->
+    
+    ## Documentation
+    
+    <!--#region my-custom-keyword ./documentation.md-->
+    
+    <!--#endregion my-custom-keyword-->
+    
+    
+    <!--#region my-other-custom-keyword !./documentation.ts-->
+    
+    <!--#endregion my-other-custom-keyword-->
+    
+    ```
 
-<!--#region keyword !./relative/path/to/documentation.ts-->
+    <!--#endregion example-readme-md-->
 
-<!--#endregion keyword-->
-```
+4.  Create the file `./documentation.ts` with the following content:
 
-gets mutated in place after executing:
+    <!--#region example-documentation-ts !./src/example/documentation.ts-->
 
-```bash
-npx md-in-place -i ./input.md
-```
+    ```ts
+    export const a: number = 1;
+    ```
 
-to:
+    <!--#endregion example-documentation-ts-->
 
-````md
-## Table of contents
+5.  Create the file `./documentation.md` with the following content:
 
-<!--#region toc-->
+    <!--#region example-documentation-md !./src/example/documentation.md-->
 
--   [Table of contents](#table-of-contents)
--   [Documentation](#documentation)
+    ```md
+    Hello world!
+    ```
 
-<!--#endregion toc-->
+    <!--#endregion example-documentation-md-->
 
-## Documentation
+6.  Execute:
 
-<!--#region keyword ./relative/path/to/documentation.md-->
+    ```bash
+    npx md-in-place
+    ```
 
-Hello world!
+    Now the `./README.md` file should have the following content:
 
-<!--#endregion keyword-->
+    <!--#region example-readme-md !!./src/example/README.after.md-->
 
-<!--#region another-keyword !./relative/path/to/documentation.ts-->
+    ````md
+    # Example
+    
+    ## Table of contents
+    
+    <!--#region toc-->
+    
+    - [Example](#example)
+        - [Table of contents](#table-of-contents)
+        - [Documentation](#documentation)
+    
+    <!--#endregion toc-->
+    
+    ## Documentation
+    
+    <!--#region my-custom-keyword ./documentation.md-->
+    
+    Hello world!
+    
+    <!--#endregion my-custom-keyword-->
+    
+    
+    <!--#region my-other-custom-keyword !./documentation.ts-->
+    
+    ```ts
+    export const a: number = 1;
+    ```
+    
+    <!--#endregion my-other-custom-keyword-->
+    
+    ````
 
-```ts
-const a: number = 1;
-```
-
-<!--#endregion another-keyword-->
-````
-
-Where the file in path `./relative/path/to/documentation.md` contains the following:
-
-```md
-Hello world!
-```
-
-and the file in path `./relative/path/to/documentation.ts` contains the following:
-
-```ts
-const a: number = 1;
-```
+    <!--#endregion example-readme-md-->
 
 ## Documentation
 
@@ -155,11 +197,11 @@ to get information on how to use the CLI.
     <!--#endregion keyword-->
     ```
 
-    the injected file is wrapped in markdown code block with the same extension as the injected file extension.
+    the injected file is wrapped in markdown code block (the one with the three back ticks) with the same extension as the injected file extension. Adding more exclamation marks will add more back ticks. This is something useful when the injected file is a markdown file with code blocks.
 
 ### Links with relative paths
 
-If any markdown or html link has relative path, the program will throw error.
+If any markdown or html link has relative path, the program will throw error. The idea behind that is that relative links will not work for both npm and and github.
 
 ### More on special comments
 
@@ -198,18 +240,6 @@ If any markdown or html link has relative path, the program will throw error.
 
 -   After you have edited the markdown file, make sure you have saved it before using the program.
 
-## Motivation
-
-I was looking for a node module that manipulates markdown files by doing the following:
-
--   inject files into markdown in place without having to write an extra file that defines how the injections happen
--   automatic toc generation that gets injected in place for github flavoured markdown, that takes into account html and markdown headings even if they are from injected files
--   preserve injection regions in markdown after injections take place, so that I can re inject after I update something
--   delete everything that is inside injection regions, before injecting
--   throw error if there are relative links in the markdown file
-
-Since I could not find such a module in npmjs, I decided to create my own.
-
 ## Contributing
 
 I am open to suggestions/pull request to improve this program.
@@ -235,6 +265,12 @@ You will find the following commands useful:
     ```
 
     The generated code coverage is saved in `./coverage`.
+
+-   Lints the source folder using typescript and eslint:
+
+    ```bash
+    npm run lint
+    ```
 
 -   Builds the typescript code from the `./src` folder to javascript code in `./dist`:
 
@@ -319,6 +355,20 @@ The markdown fragments are converted to html and together with the rest of the h
 This program would not be possible without [remark](https://www.npmjs.com/package/remark) and [jsdom](https://www.npmjs.com/package/jsdom).
 
 ## Changelog
+
+**0.1.0**
+
+-   The program now works for indented comments. Here is an example:
+
+    ```md
+    -   a list
+
+        <!--#region toc-->
+
+        <!--#endregion toc-->
+    ```
+
+-   You can add more than one exclamation mark in the relative path of the file to be injected, if you want to wrap it with more than three back ticks. This is useful when you inject a markdown file that has code blocks.
 
 **0.0.1**
 

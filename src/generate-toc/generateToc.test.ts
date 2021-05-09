@@ -30,11 +30,13 @@ describe(generateToc.name, () => {
             <h3>bye bye</h3>
         `;
         const { tocSpacing } = constants;
-        expect(generateToc(md)).toBe(tagUnindent`
-            ${tocSpacing.repeat(1-1)}- [hello world](#hello-world)
-            ${tocSpacing.repeat(2-1)}- [hello kitty](#my-id)
-            ${tocSpacing.repeat(2-1)}- [Hello Bob](#hello-bob)
-            ${tocSpacing.repeat(3-1)}- [bye bye](#bye-bye)
-        `);
+        const indent: string = "    ";
+        // prettier-ignore
+        expect(generateToc(md,indent)).toBe(
+            `${indent}${tocSpacing.repeat(1-1)}- [hello world](#hello-world)` + "\n" +
+            `${indent}${tocSpacing.repeat(2-1)}- [hello kitty](#my-id)` + "\n" +
+            `${indent}${tocSpacing.repeat(2-1)}- [Hello Bob](#hello-bob)` + "\n" +
+            `${indent}${tocSpacing.repeat(3-1)}- [bye bye](#bye-bye)`
+        );
     });
 });

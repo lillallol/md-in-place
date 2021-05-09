@@ -7,7 +7,8 @@
     ],
     "ignoreUnimported": [
         "src/index.ts",
-        "src/**/*.{test,mock}.ts"
+        "src/**/*.{test,mock}.ts",
+        "src/example/**/*.{ts,md}"
     ],
     "ignorePatterns": [
         "**/node_modules/**"

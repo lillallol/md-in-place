@@ -209,6 +209,20 @@ export const errorMessages = {
             ${_.headingIdRegExpSrc}
 
     `,
+    startAndEndCommentDoNotHaveSameIdentation: (_: {
+        startCommentLine: number;
+        endCommentLine: number;
+    }): string => tagUnindent`
+        Start comment in line:
+
+            ${_.startCommentLine}
+
+        has different indentation from its end comment in line:
+
+            ${_.endCommentLine}
+
+        Make both comments have the same indentation.
+    `,
 };
 
 export const internalErrorMessages = {

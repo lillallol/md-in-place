@@ -7,16 +7,20 @@ import { generateMd } from "./generateMd";
 
 const { tocSpacing } = constants;
 
-//@TODO have to test that the code blocks add extension for the paths that start !
+const absolutePathToMdMock: string = path.resolve(__dirname, "./1.mock.md");
+const absolutePathToTsMock: string = path.resolve(__dirname, "./1.mock.ts");
+const mdMock: string = fs.readFileSync(absolutePathToMdMock, { encoding: "utf-8" });
+const tsMock: string = fs.readFileSync(absolutePathToTsMock, { encoding: "utf-8" });
+
 describe(generateMd.name, () => {
-    it("generates the markdown when both toc and import comments are used", () => {
+    it("generates the markdown when both toc and file import comments are used", () => {
         const md = tagUnindent`
             # hello world
 
             <!--#region toc-->
-            
+
             ## to be deleted
-            
+
             <!--#endregion toc-->
 
             ## hello kitty
@@ -39,54 +43,51 @@ describe(generateMd.name, () => {
             <h3>hello bob</h3>
 
             <!--#region mock !./1.mock.ts-->
-            <!--#endregion mock>
+            <!--#endregion mock-->
         `;
-        const absolutePathToMdMock: string = path.resolve(__dirname, "./1.mock.md");
-        const absolutePathToTsMock: string = path.resolve(__dirname, "./1.mock.ts");
-        const mdMock: string = fs.readFileSync(absolutePathToMdMock, { encoding: "utf-8" });
-        const tsMock: string = fs.readFileSync(absolutePathToTsMock, { encoding: "utf-8" });
 
-        expect(generateMd({ md, pathToFolderContainingMd: __dirname })).toBe(
-            tagUnindent`
-                # hello world
+        const toBe: string = tagUnindent`
+            # hello world
 
-                <!--#region toc-->
+            <!--#region toc-->
 
-                ${tocSpacing.repeat(1 - 1)}- [hello world](#hello-world)
-                ${tocSpacing.repeat(2 - 1)}- [hello kitty](#hello-kitty)
-                ${tocSpacing.repeat(2 - 1)}- [hello world from mock](#hello-world-from-mock)
-                ${tocSpacing.repeat(3 - 1)}- [hello bob](#hello-bob)
+            ${tocSpacing.repeat(1 - 1)}- [hello world](#hello-world)
+            ${tocSpacing.repeat(2 - 1)}- [hello kitty](#hello-kitty)
+            ${tocSpacing.repeat(2 - 1)}- [hello world from mock](#hello-world-from-mock)
+            ${tocSpacing.repeat(3 - 1)}- [hello bob](#hello-bob)
 
-                <!--#endregion toc-->
+            <!--#endregion toc-->
 
-                ## hello kitty
+            ## hello kitty
 
-                <code>
-                &lt;!--#region keyword !./som/path--&gt;
-                </code>
-    
-                \`\`\`
-                ## hello kitty
-                <!--#region examples ./1.mock.md-->
-                \`\`\`
+            <code>
+            &lt;!--#region keyword !./som/path--&gt;
+            </code>
 
-                <!--#region examples ./1.mock.md-->
+            \`\`\`
+            ## hello kitty
+            <!--#region examples ./1.mock.md-->
+            \`\`\`
 
-                ${[mdMock]}
+            <!--#region examples ./1.mock.md-->
 
-                <!--#endregion examples-->
+            ${[mdMock]}
 
-                <h3>hello bob</h3>
+            <!--#endregion examples-->
 
-                <!--#region mock !./1.mock.ts-->
+            <h3>hello bob</h3>
 
-                \`\`\`ts
-                ${[tsMock]}
-                \`\`\`
+            <!--#region mock !./1.mock.ts-->
 
-                <!--#endregion mock>
-            `
-        );
+            \`\`\`ts
+            ${[tsMock]}
+            \`\`\`
+
+            <!--#endregion mock-->
+        `;
+
+        const expected: string = generateMd({ md, pathToFolderContainingMd: __dirname });
+        expect(expected).toBe(toBe);
     });
     it("generates the markdown when only imports comments are used", () => {
         const md = tagUnindent`
@@ -99,10 +100,6 @@ describe(generateMd.name, () => {
             <!--#region mock !./1.mock.ts-->
             <!--#endregion mock>
         `;
-        const absolutePathToMdMock: string = path.resolve(__dirname, "./1.mock.md");
-        const absolutePathToTsMock: string = path.resolve(__dirname, "./1.mock.ts");
-        const mdMock: string = fs.readFileSync(absolutePathToMdMock, { encoding: "utf-8" });
-        const tsMock: string = fs.readFileSync(absolutePathToTsMock, { encoding: "utf-8" });
 
         expect(generateMd({ md, pathToFolderContainingMd: __dirname })).toBe(
             tagUnindent`
@@ -149,5 +146,73 @@ describe(generateMd.name, () => {
 
             ## hello world
         `);
+    });
+    it("works properly for indented comment that has only space on its indentation, and has the same indentation as its parent list", () => {
+        const md = tagUnindent`
+            -   a list just for indentation
+
+                <!--#region mock !./1.mock.ts-->
+
+                to be deleted
+
+                <!--#endregion mock-->
+        `;
+        const toBe: string = tagUnindent`
+            -   a list just for indentation
+
+                <!--#region mock !./1.mock.ts-->
+
+                \`\`\`ts
+                ${[tsMock]}
+                \`\`\`
+
+                <!--#endregion mock-->
+        `;
+        const expected: string = generateMd({ md, pathToFolderContainingMd: __dirname });
+        expect(expected).toBe(toBe);
+    });
+    it("works properly for indented comment that has only space on its indentation, and does not have the same indentation as its parent list", () => {
+        const md = tagUnindent`
+            - a list just for indentation
+
+                <!--#region mock !./1.mock.ts-->
+
+                to be deleted
+
+                <!--#endregion mock-->
+        `;
+        const toBe: string = tagUnindent`
+            - a list just for indentation
+
+                <!--#region mock !./1.mock.ts-->
+
+                \`\`\`ts
+                ${[tsMock]}
+                \`\`\`
+
+                <!--#endregion mock-->
+        `;
+        const expected: string = generateMd({ md, pathToFolderContainingMd: __dirname });
+        expect(expected).toBe(toBe);
+    });
+    it("works properly for indented comment that does not has only space on its indentation", () => {
+        const md = tagUnindent`
+            -  <!--#region mock !./1.mock.ts-->
+
+               to be deleted
+
+               <!--#endregion mock-->
+        `;
+        const toBe: string = tagUnindent`
+            -  <!--#region mock !./1.mock.ts-->
+
+               \`\`\`ts
+               ${[tsMock]}
+               \`\`\`
+
+               <!--#endregion mock-->
+        `;
+        const expected: string = generateMd({ md, pathToFolderContainingMd: __dirname });
+        expect(expected).toBe(toBe);
     });
 });

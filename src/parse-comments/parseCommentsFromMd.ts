@@ -2,7 +2,7 @@ import * as path from "path";
 
 import { JSDOM } from "jsdom";
 import { mdToAst } from "../generate-toc/mdToAst";
-import { parsedComment } from "../types";
+import { astNode, parsedComment } from "../types";
 import { ParsedEndComment } from "./ParsedEndComment";
 import { ParsedStartComment } from "./ParsedStartComment";
 import { ParsedStartTocComment } from "./ParsedStartTocComment";
@@ -10,102 +10,124 @@ import { throwForNotValidComments } from "./throwForNotValidComments";
 import { ParsedEndTocComment } from "./ParsedEndTocComment";
 import { internalErrorMessages } from "../errorMessages";
 import { constants } from "../constants";
+import { getIndentForComment } from "./getIndentForComment";
 
 export function parseCommentsFromMd(md: string, absolutePathToFolderOfMd: string): parsedComment[] {
     const toReturn: parsedComment[] = [];
-    const {
-        injectFileCommentEndValueRegExp,
-        injectFileCommentStartValueRegExp,
-        injectTocCommentEndValueRegExp,
-        injectTocCommentStartValueRegExp,
-    } = constants;
-    mdToAst(md).children.forEach(
-        ({
-            type,
+
+    (function recurse(astNode: astNode) {
+        const { type } = astNode;
+        if (type === "html") {
+            temp({ astNode });
+            return;
+        }
+        astNode.children?.forEach((astNode) => {
+            recurse(astNode);
+        });
+    })(mdToAst(md));
+
+    throwForNotValidComments(toReturn, absolutePathToFolderOfMd);
+
+    return toReturn;
+
+    //add toReturn as a parameter here
+    //add md as a parameter here
+    function temp(_: { astNode: astNode }) {
+        const {
+            injectFileCommentEndValueRegExp,
+            injectFileCommentStartValueRegExp,
+            injectTocCommentEndValueRegExp,
+            injectTocCommentStartValueRegExp,
+        } = constants;
+        const { astNode } = _;
+        const {
             position: {
                 start: { offset: startOffset, line },
                 end: { offset: endOffset },
             },
-        }) => {
-            if (type === "html") {
-                [...JSDOM.fragment(md.slice(startOffset, endOffset)).childNodes]
-                    .filter(({ nodeType }) => nodeType === 8)
-                    .forEach((node) => {
-                        const string = node.nodeValue;
+        } = astNode;
+        [...JSDOM.fragment(md.slice(startOffset, endOffset)).childNodes]
+            .filter(({ nodeType }) => nodeType === 8)
+            .forEach((node) => {
+                const string = node.nodeValue;
 
-                        //@TODO is this a legit case?
-                        if (string === null) return;
+                //@TODO is this a legit case?
+                if (string === null) return;
 
-                        const tocStart = string.match(injectTocCommentStartValueRegExp);
-                        const tocEnd = string.match(injectTocCommentEndValueRegExp);
+                const tocStart = string.match(injectTocCommentStartValueRegExp);
+                const tocEnd = string.match(injectTocCommentEndValueRegExp);
 
-                        /**
-                         * These two if clauses for toc have to be executed before the inject file if clauses
-                         */
-                        if (tocStart !== null) {
-                            toReturn.push(
-                                new ParsedStartTocComment({
-                                    endOffset,
-                                    startOffset,
-                                    keyword: "toc",
-                                    line,
-                                })
-                            );
-                            return;
-                        }
-                        if (tocEnd !== null) {
-                            toReturn.push(
-                                new ParsedEndTocComment({
-                                    endOffset,
-                                    startOffset,
-                                    keyword: "toc",
-                                    line,
-                                })
-                            );
-                            return;
-                        }
+                /**
+                 * These two if clauses for toc have to be executed before the inject file if clauses
+                 */
+                if (tocStart !== null) {
+                    const { indent } = getIndentForComment({ md, startOffset });
+                    toReturn.push(
+                        new ParsedStartTocComment({
+                            endOffset,
+                            startOffset,
+                            keyword: "toc",
+                            line,
+                            indent,
+                        })
+                    );
+                    return;
+                }
+                if (tocEnd !== null) {
+                    const { indent, trimmedStartStartOffset } = getIndentForComment({ md, startOffset });
 
-                        const startMatch = string.match(injectFileCommentStartValueRegExp);
-                        const endMatch = string.match(injectFileCommentEndValueRegExp);
+                    toReturn.push(
+                        new ParsedEndTocComment({
+                            endOffset,
+                            startOffset: trimmedStartStartOffset,
+                            keyword: "toc",
+                            line,
+                            indent,
+                        })
+                    );
+                    return;
+                }
 
-                        if (startMatch !== null) {
-                            const { groups } = startMatch;
-                            if (groups === undefined) throw Error(internalErrorMessages.internalLibraryError);
+                const startMatch = string.match(injectFileCommentStartValueRegExp);
+                const endMatch = string.match(injectFileCommentEndValueRegExp);
 
-                            const { keyword, questionMark, path: relativePath } = groups;
-                            toReturn.push(
-                                new ParsedStartComment({
-                                    endOffset,
-                                    startOffset,
-                                    keyword,
-                                    absolutePath: path.resolve(absolutePathToFolderOfMd, relativePath),
-                                    shouldCodeBlock: questionMark === undefined ? false : true,
-                                    line,
-                                })
-                            );
-                            return;
-                        }
+                if (startMatch !== null) {
+                    const { groups } = startMatch;
+                    if (groups === undefined) throw Error(internalErrorMessages.internalLibraryError);
 
-                        if (endMatch !== null) {
-                            const { groups } = endMatch;
-                            if (groups === undefined) throw Error(internalErrorMessages.internalLibraryError);
+                    const { keyword, exclamationMark, path: relativePath } = groups;
+                    const { indent } = getIndentForComment({ md, startOffset });
+                    toReturn.push(
+                        new ParsedStartComment({
+                            endOffset,
+                            startOffset,
+                            keyword,
+                            absolutePath: path.resolve(absolutePathToFolderOfMd, relativePath),
+                            exclamationMarks: exclamationMark,
+                            line,
+                            indent,
+                        })
+                    );
+                    return;
+                }
 
-                            const { keyword } = groups;
-                            toReturn.push(
-                                new ParsedEndComment({
-                                    endOffset,
-                                    startOffset,
-                                    keyword,
-                                    line,
-                                })
-                            );
-                            return;
-                        }
-                    });
-            }
-        }
-    );
+                if (endMatch !== null) {
+                    const { groups } = endMatch;
+                    if (groups === undefined) throw Error(internalErrorMessages.internalLibraryError);
 
-    throwForNotValidComments(toReturn, absolutePathToFolderOfMd);
-    return toReturn;
+                    const { keyword } = groups;
+                    const { trimmedStartStartOffset, indent } = getIndentForComment({ md, startOffset });
+                    toReturn.push(
+                        new ParsedEndComment({
+                            endOffset,
+                            startOffset: trimmedStartStartOffset,
+                            keyword,
+                            line,
+                            indent,
+                        })
+                    );
+                    return;
+                }
+            });
+    }
 }

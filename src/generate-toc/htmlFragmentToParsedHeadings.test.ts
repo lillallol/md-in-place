@@ -1,3 +1,4 @@
+import { constants } from "../constants";
 import { errorMessages } from "../errorMessages";
 import { tagUnindent } from "../es-utils/tagUnindent";
 import { parsedHeading } from "../types";
@@ -62,5 +63,18 @@ describe(htmlFragmentToParsedHeadings.name, () => {
         ],
     ])("throws error when a text less heading is encountered", ({ html }) => {
         expect(() => htmlFragmentToParsedHeadings(html)).toThrow(errorMessages.encounteredTextLessHeading(html));
+    });
+    it("throws error when the heading has bad id pattern", () => {
+        const id = "inject/generate";
+        const html: string = tagUnindent`
+            <h1>${id}</h1>
+        `;
+        expect(() => htmlFragmentToParsedHeadings(html)).toThrow(
+            errorMessages.badHeadingIdPattern({
+                headingOuterHtml: html,
+                id,
+                headingIdRegExpSrc: constants.headingIdRegExp.source,
+            })
+        );
     });
 });

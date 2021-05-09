@@ -396,4 +396,17 @@ describe(throwForNotValidComments.name, () => {
             errorMessages.relativePathOfFileToInjectCanNotBeAccessed(path.resolve(process.cwd(), "./does-not-exist.md"))
         );
     });
+    it("throws error when the start and end comment have different indentation", () => {
+        const md: string = tagUnindent`
+            - a list just for indentation
+               <!--#region toc-->
+                <!--#endregion toc-->
+        `;
+        expect(() => parseCommentsFromMd(md, process.cwd())).toThrow(
+            errorMessages.startAndEndCommentDoNotHaveSameIdentation({
+                endCommentLine: 3,
+                startCommentLine: 2,
+            })
+        );
+    });
 });

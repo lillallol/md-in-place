@@ -11,7 +11,7 @@ import { ParsedEndComment } from "./ParsedEndComment";
 //@TODO it would be a good idea to print the toc comments in the error messages
 export function throwForNotValidComments(parsedComments: parsedComment[], pathToFolderContainingMd: string): void {
     let tocRegionHasBeenEncounteredInLines: { start: number; end: number } | undefined = undefined;
-    for (let i = 0; i  < parsedComments.length; i = i + 2) {
+    for (let i = 0; i < parsedComments.length; i = i + 2) {
         const startComment = parsedComments[i];
         const endComment = parsedComments[i + 1];
 
@@ -63,6 +63,15 @@ export function throwForNotValidComments(parsedComments: parsedComment[], pathTo
                 end: endComment.line,
                 start: startComment.line,
             };
+            //@TODO DRY THAT
+            if (startComment.indent !== endComment.indent) {
+                throw Error(
+                    errorMessages.startAndEndCommentDoNotHaveSameIdentation({
+                        endCommentLine: endComment.line,
+                        startCommentLine: startComment.line,
+                    })
+                );
+            }
             continue;
         }
 
@@ -121,6 +130,16 @@ export function throwForNotValidComments(parsedComments: parsedComment[], pathTo
                     endCommentKeyword: endComment.keyword,
                     endCommentLine: endComment.line,
                     startCommentKeyword: startComment.keyword,
+                    startCommentLine: startComment.line,
+                })
+            );
+        }
+
+        //@TODO DRY THAT
+        if (startComment.indent !== endComment.indent) {
+            throw Error(
+                errorMessages.startAndEndCommentDoNotHaveSameIdentation({
+                    endCommentLine: endComment.line,
                     startCommentLine: startComment.line,
                 })
             );

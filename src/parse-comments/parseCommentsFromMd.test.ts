@@ -1,6 +1,7 @@
 import { tagUnindent } from "../es-utils/tagUnindent";
 import { parseCommentsFromMd } from "./parseCommentsFromMd";
 
+//@TODO this test does not test the full interface. This can bite really hard in the future
 describe(parseCommentsFromMd.name, () => {
     it("parses the 0 dom depth comments for toc and file injection from the html fragments", () => {
         const md = tagUnindent`
@@ -67,5 +68,43 @@ describe(parseCommentsFromMd.name, () => {
             <!--#endregion documentation-->
         `;
         expect(parseCommentsFromMd(md, process.cwd()).length).toBe(8);
+    });
+    it("parses toc comments thats inside markdown lists properly", () => {
+        const md = tagUnindent`
+            -   This is a markdown list
+            
+                <!--#region toc-->
+
+                <!--#endregion toc-->
+        `;
+        expect(
+            parseCommentsFromMd(md, process.cwd()).map(({ indent, line }) => ({
+                indent,
+                line,
+            }))
+        ).toEqual([
+            { indent: "    ", line: 3 },
+            { indent: "    ", line: 5 },
+        ]);
+    });
+    it("parses comments thats inside markdown lists properly", () => {
+        const md = tagUnindent`
+            -   a list just for indentation
+
+                <!--#region mock !./TODO.md-->
+
+                to be deleted
+
+                <!--#endregion mock-->
+        `;
+        expect(
+            parseCommentsFromMd(md, process.cwd()).map(({ indent, line }) => ({
+                indent,
+                line,
+            }))
+        ).toEqual([
+            { indent: "    ", line: 3 },
+            { indent: "    ", line: 7 },
+        ]);
     });
 });

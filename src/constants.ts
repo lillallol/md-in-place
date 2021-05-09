@@ -69,7 +69,7 @@ export const constants: {
         return RegExp(
             `\\s*${constants.commentStartKeyword}`+
             `\\s+(?<keyword>${constants.keywordRegExp.source})`+
-            `\\s+(?<questionMark>!)?`+
+            `\\s+(?<exclamationMark>!*)`+
             `(?<path>${constants.pathRegExp.source})`+
             `\\s*`,"s"
         );

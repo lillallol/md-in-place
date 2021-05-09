@@ -10,32 +10,44 @@ import { internalErrorMessages } from "../../errorMessages";
 
 //@TODO the code here can be more expectable
 export function placeholders(md: string, parsedCommentsValidated: parsedComment[]): string[] {
-    let shouldGenerateToc = false;
     const placeholdersWithoutToc: (string | null)[] = parsedCommentsValidated
         .filter((_, i) => i % 2 === 0)
         .map((_) => {
             // given that the parsed comments are validated, then the even indexes correspond to only start comments
             if (_ instanceof ParsedStartTocComment) {
-                shouldGenerateToc = true;
                 return null;
             }
             if (_ instanceof ParsedStartComment) {
-                const { absolutePath, shouldCodeBlock } = _;
+                const { absolutePath, exclamationMarks, indent } = _;
                 const file = fs.readFileSync(absolutePath, { encoding: "utf-8" });
 
                 const fileExtension = path.extname(absolutePath).slice(1);
 
                 //@TODO have to throw for strange cases of file extension
+                const toInject = (() => {
+                    if (exclamationMarks.length !== 0) {
+                        const backTicks = "`".repeat(2 + exclamationMarks.length);
 
-                const toInject = shouldCodeBlock ? `\`\`\`${fileExtension}\n${file}\n\`\`\`` : file;
-                return toInject;
+                        return `${backTicks}${fileExtension}\n${file}\n${backTicks}`;
+                    }
+                    return file;
+                })();
+                return toInject
+                    .split("\n")
+                    .map((line) => indent + line)
+                    .join("\n");
             }
             throw Error(internalErrorMessages.internalLibraryError);
         });
 
+    //@TODO this has to go on its own file
+    const isParsedTocComment = (v: unknown): v is ParsedStartTocComment => v instanceof ParsedStartTocComment;
+    const parsedStartTocComment: ParsedStartTocComment | undefined = parsedCommentsValidated.find(isParsedTocComment);
+
     const template = templateStringsArray(md, parsedCommentsValidated);
 
-    if (shouldGenerateToc) {
+    if (parsedStartTocComment !== undefined) {
+        const { indent } = parsedStartTocComment;
         const mdToGenerateTocFrom: string = template
             .map((s, i) => {
                 const placeholder: null | undefined | string = placeholdersWithoutToc[i];
@@ -44,7 +56,7 @@ export function placeholders(md: string, parsedCommentsValidated: parsedComment[
             })
             .join("\n");
 
-        const generatedToc: string = generateToc(mdToGenerateTocFrom);
+        const generatedToc: string = generateToc(mdToGenerateTocFrom, indent);
 
         return placeholdersWithoutToc.map<string>((placeholder) => (placeholder === null ? generatedToc : placeholder));
     }

@@ -27,7 +27,7 @@ const parsedCommands = [
     }
 ];
 const {argv} = process;
-const cliVersion = "0.0.0";
+const cliVersion = "0.0.1";
 const cliName = "md-in-place";
 const strict = false;
 cli({

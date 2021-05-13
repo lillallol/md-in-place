@@ -1,9 +1,7 @@
 {
     "name": "md-in-place",
     "version": "0.1.0",
-    "bin": {
-        "md-in-place": "bin/bin.js"
-    },
+    "bin": "bin/bin.js",
     "description": "CLI that enables toc generation and file imports for markdown files.",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",

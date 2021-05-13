@@ -1,6 +1,6 @@
 # md-in-place
 
-> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. Even then you might lose sections of your markdown file since this program is not battle tested and bugs can occur. However I personally trust it and use it to create the `README.md` file of my own projects and have not encountered any unwanted results. Use on your own risk.
+> CAUTION: To avoid unintentional irreversible loss of sections of your markdown file, read and understand the documentation before using this node module. The library is not battle tested. Use on your own risk. However I have personally used it to create the `README.md` files of my own projects and have not encountered any unwanted results.
 
 ## Table of contents
 
@@ -23,6 +23,10 @@
         - [Limitations](#limitations)
     - [Acknowledgments](#acknowledgments)
     - [Changelog](#changelog)
+        - [0.2.0](#020)
+        - [0.1.0](#010)
+        - [0.0.1](#001)
+        - [0.0.0](#000)
     - [License](#license)
 
 <!--#endregion toc-->
@@ -356,7 +360,15 @@ This program would not be possible without [remark](https://www.npmjs.com/packag
 
 ## Changelog
 
-**0.1.0**
+### 0.2.0
+
+**non breaking changes:**
+
+-   Markdown headings are now converted to ids for the toc, in accordance to the information provided in [this](https://gist.github.com/asabaylus/3071099#gistcomment-1593627) link.
+
+### 0.1.0
+
+**non breaking changes:**
 
 -   The program now works for indented comments. Here is an example:
 
@@ -370,11 +382,13 @@ This program would not be possible without [remark](https://www.npmjs.com/packag
 
 -   You can add more than one exclamation mark in the relative path of the file to be injected, if you want to wrap it with more than three back ticks. This is useful when you inject a markdown file that has code blocks.
 
-**0.0.1**
+### 0.0.1
+
+**bug fixes:**
 
 -   Moved `fn-to-cli` from dev dependencies to dependencies.
 
-**0.0.0**
+### 0.0.0
 
 -   Published the package in npm.
 

@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { constants } from "../../constants";
 import { tagUnindent } from "../../es-utils/tagUnindent";
+import { headingCount } from "../../generate-toc/markdownHeadingToId";
 import { generateMd } from "./generateMd";
 
 const { tocSpacing } = constants;
@@ -11,6 +12,10 @@ const absolutePathToMdMock: string = path.resolve(__dirname, "./1.mock.md");
 const absolutePathToTsMock: string = path.resolve(__dirname, "./1.mock.ts");
 const mdMock: string = fs.readFileSync(absolutePathToMdMock, { encoding: "utf-8" });
 const tsMock: string = fs.readFileSync(absolutePathToTsMock, { encoding: "utf-8" });
+
+beforeEach(() => {
+    Object.keys(headingCount).forEach((key) => delete headingCount[key]);
+});
 
 describe(generateMd.name, () => {
     it("generates the markdown when both toc and file import comments are used", () => {

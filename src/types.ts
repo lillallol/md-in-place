@@ -4,9 +4,17 @@ import type { ParsedStartComment } from "./parse-comments/ParsedStartComment";
 import type { ParsedStartTocComment } from "./parse-comments/ParsedStartTocComment";
 
 export type parsedHeading = {
-    id: string;
-    number: number;
+    depth: number;
     title: string;
+};
+
+export type parsedHeadingWithIndex = parsedHeading & {
+    /**
+     * @description
+     * The index that the context element has for the array that has all the parsed headings
+     */
+    index: number;
+    id: string;
 };
 
 export type parsedComment = ParsedEndComment | ParsedStartComment | ParsedStartTocComment | ParsedEndTocComment;

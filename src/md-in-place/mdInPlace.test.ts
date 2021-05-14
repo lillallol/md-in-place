@@ -3,7 +3,7 @@ import * as path from "path";
 import { constants } from "../constants";
 
 import { errorMessages } from "../errorMessages";
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { mdInPlace } from "./mdInPlace";
 
 describe(mdInPlace.name, () => {
@@ -47,8 +47,7 @@ describe(mdInPlace.name, () => {
 
                         <!--#region toc-->
 
-                        ${constants.tocSpacing.repeat(1 - 1)}- [hello world](#hello-world)
-                        ${constants.tocSpacing.repeat(2 - 1)}- [a list](#a-list)
+                        ${constants.tocSpacing.repeat(2 - 2)}- [a list](#a-list)
 
                         <!--#endregion toc-->
 

@@ -4,9 +4,8 @@
 
 <!--#region toc-->
 
-- [Example](#example)
-    - [Table of contents](#table-of-contents)
-    - [Documentation](#documentation)
+- [Table of contents](#table-of-contents)
+- [Documentation](#documentation)
 
 <!--#endregion toc-->
 

@@ -1,5 +1,5 @@
 import { constants } from "../constants";
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { generateToc } from "./generateToc";
 
 describe(generateToc.name, () => {
@@ -32,11 +32,10 @@ describe(generateToc.name, () => {
         const { tocSpacing } = constants;
         const indent: string = "    ";
         // prettier-ignore
-        expect(generateToc(md,indent)).toBe(
-            `${indent}${tocSpacing.repeat(1-1)}- [hello world](#hello-world)` + "\n" +
-            `${indent}${tocSpacing.repeat(2-1)}- [hello kitty](#my-id)` + "\n" +
-            `${indent}${tocSpacing.repeat(2-1)}- [Hello Bob](#hello-bob)` + "\n" +
-            `${indent}${tocSpacing.repeat(3-1)}- [bye bye](#bye-bye)`
+        expect(generateToc({ md,indent,collapse : false})).toBe(
+            `${indent}${tocSpacing.repeat(2-2)}- [hello kitty](#hello-kitty)` + "\n" +
+            `${indent}${tocSpacing.repeat(2-2)}- [Hello Bob](#hello-bob)` + "\n" +
+            `${indent}${tocSpacing.repeat(3-2)}- [bye bye](#bye-bye)`
         );
     });
 });

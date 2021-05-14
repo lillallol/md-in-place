@@ -1,4 +1,4 @@
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { getIndentForComment } from "./getIndentForComment";
 
 type toBe = ReturnType<typeof getIndentForComment>;

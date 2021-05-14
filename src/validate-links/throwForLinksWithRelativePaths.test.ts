@@ -1,5 +1,5 @@
 import { errorMessages } from "../errorMessages";
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { throwForLinksWithRelativePaths } from "./throwForLinksWithRelativePaths";
 
 describe(throwForLinksWithRelativePaths.name, () => {

@@ -1,7 +1,5 @@
 import { JSDOM } from "jsdom";
-import { constants } from "../constants";
 import { errorMessages, internalErrorMessages } from "../errorMessages";
-import { toKebab } from "../es-utils/toKebab";
 import { parsedHeading } from "../types";
 
 export function htmlFragmentToParsedHeadings(html: string): parsedHeading[] {
@@ -11,26 +9,8 @@ export function htmlFragmentToParsedHeadings(html: string): parsedHeading[] {
             if (toReturn === null || toReturn.trim().length === 0) {
                 throw Error(errorMessages.encounteredTextLessHeading(h.outerHTML));
             }
-            return toReturn.trim();
+            return toReturn;
         })();
-
-        const id: string = (() => {
-            const idAttribute = h.getAttribute("id");
-            if (idAttribute !== null && idAttribute.length > 0) return toKebab(idAttribute);
-            return toKebab(title);
-        })();
-
-        const { headingIdRegExp } = constants;
-
-        if (!headingIdRegExp.test(id)) {
-            throw Error(
-                errorMessages.badHeadingIdPattern({
-                    headingIdRegExpSrc: headingIdRegExp.source,
-                    headingOuterHtml: h.outerHTML,
-                    id,
-                })
-            ); //@TODO
-        }
 
         const number: number = (() => {
             if (h.tagName === "H1") return 1;
@@ -42,8 +22,7 @@ export function htmlFragmentToParsedHeadings(html: string): parsedHeading[] {
             throw Error(internalErrorMessages.internalLibraryError);
         })();
         return {
-            id,
-            number,
+            depth: number,
             title,
         };
     });

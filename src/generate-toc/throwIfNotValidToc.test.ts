@@ -1,6 +1,5 @@
 import { errorMessages } from "../errorMessages";
-import { tagUnindent } from "../es-utils/tagUnindent";
-import { toKebab } from "../es-utils/toKebab";
+import { tagUnindent } from "../es-utils/index";
 import { parseHeadingsFromMd } from "./parseHeadingsFromMd";
 import { throwIfNotValidToc } from "./throwIfNotValidToc";
 
@@ -47,17 +46,30 @@ describe(throwIfNotValidToc.name, () => {
 
         expect(() => throwIfNotValidToc(parsedHeadings)).not.toThrow();
     });
-    it("throws if an id corresponds to more than one heading", () => {
-        const title1 = "hello world";
-        const id = toKebab(title1);
-        const invalidTocMd = tagUnindent`
-            # ${title1}
+    it.each([
+        [
+            {
+                md: tagUnindent`
+                    # hello world
 
-            <h2 id="${id}">${title1}</h2>
-        `;
+                    # hello bob
+                `,
+            },
+        ],
+        [
+            {
+                md: tagUnindent`
+                    # hello world
+                
+                    ## hello kitty
 
-        const parsedHeadings = parseHeadingsFromMd(invalidTocMd);
+                    # hello bob
+                `,
+            },
+        ],
+    ])("throw when there are more than one headings of depth 1", ({ md }) => {
+        const parsedHeadings = parseHeadingsFromMd(md);
 
-        expect(() => throwIfNotValidToc(parsedHeadings)).toThrow(errorMessages.idIsAlreadyUsed(id));
+        expect(() => throwIfNotValidToc(parsedHeadings)).toThrow(errorMessages.badPlaceForH1);
     });
 });

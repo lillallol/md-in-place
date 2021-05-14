@@ -1,5 +1,5 @@
 import { constants } from "./constants";
-import { tagUnindent } from "./es-utils/tagUnindent";
+import { tagUnindent } from "./es-utils/index";
 
 const {
     tocCommentStartRegExpSrc: tocHtmlCommentStartRegExpSource,
@@ -14,32 +14,7 @@ export const errorMessages = {
 
         can not be accessed.
     `,
-    badConsecutiveHeadings: (title1: string, title2: string): string => tagUnindent`
-        The heading with title:
-    
-            ${title1}
-    
-        has next heading with title:
-    
-            ${title2}
-    
-        that has depth difference greater than 1.
-    
-        Here is an example of markdown file that triggers this error:
-    
-            ## title 1 of depth 2
-    
-            #### title 2 of depth 4
-    
-    `,
-    idIsAlreadyUsed: (id: string): string => tagUnindent`
-        There two or more headings which corresponds to the following id:
-
-            ${id}
-
-        while there should be only one.
-    `,
-    badPlaceForH1: "Heading H1 has to be before every other heading.",
+    //#region comments
     moreThanOneStartCommentForToc: tagUnindent`
         There are more than one starting comments for toc:
     
@@ -154,6 +129,23 @@ export const errorMessages = {
 
         does not have a starting comment.
     `,
+    startAndEndCommentDoNotHaveSameIdentation: (_: {
+        startCommentLine: number;
+        endCommentLine: number;
+    }): string => tagUnindent`
+        Start comment in line:
+
+            ${_.startCommentLine}
+
+        has different indentation from its end comment in line:
+
+            ${_.endCommentLine}
+
+        Make both comments have the same indentation.
+    `,
+    //#endregion
+    //#region headings
+    //@TODO what about html links with relative paths?
     encounteredLinkWithRelativePathInGeneratedMd: (link: string): string => tagUnindent`
         Encountered link with relative path:
     
@@ -191,38 +183,26 @@ export const errorMessages = {
                 ${[md]}
         `;
     },
-    badHeadingIdPattern: (_: {
-        id: string;
-        headingOuterHtml: string;
-        headingIdRegExpSrc: string;
-    }): string => tagUnindent`
-        The extracted id:
+    badConsecutiveHeadings: (title1: string, title2: string): string => tagUnindent`
+        The heading with title:
 
-            ${_.id}
+            ${title1}
 
-        of the following heading:
+        has next heading with title:
 
-            ${_.headingOuterHtml}
+            ${title2}
 
-        does not satisfy the regular expression:
+        that has depth difference greater than 1.
 
-            ${_.headingIdRegExpSrc}
+        Here is an example of markdown file that triggers this error:
+
+            ## title 1 of depth 2
+
+            #### title 2 of depth 4
 
     `,
-    startAndEndCommentDoNotHaveSameIdentation: (_: {
-        startCommentLine: number;
-        endCommentLine: number;
-    }): string => tagUnindent`
-        Start comment in line:
-
-            ${_.startCommentLine}
-
-        has different indentation from its end comment in line:
-
-            ${_.endCommentLine}
-
-        Make both comments have the same indentation.
-    `,
+    badPlaceForH1: "Heading H1 has to be before every other heading.",
+    //#endregion
 };
 
 export const internalErrorMessages = {

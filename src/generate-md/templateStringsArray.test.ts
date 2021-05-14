@@ -1,4 +1,4 @@
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { parseCommentsFromMd } from "../parse-comments/parseCommentsFromMd";
 import { templateStringsArray } from "./templateStringsArray";
 

@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { constants } from "../../constants";
-import { tagUnindent } from "../../es-utils/tagUnindent";
-import { headingCount } from "../../generate-toc/markdownHeadingToId";
+import { tagUnindent } from "../../es-utils/index";
+import { headingCount } from "../../generate-toc/headingToId";
 import { generateMd } from "./generateMd";
 
 const { tocSpacing } = constants;
@@ -56,10 +56,9 @@ describe(generateMd.name, () => {
 
             <!--#region toc-->
 
-            ${tocSpacing.repeat(1 - 1)}- [hello world](#hello-world)
-            ${tocSpacing.repeat(2 - 1)}- [hello kitty](#hello-kitty)
-            ${tocSpacing.repeat(2 - 1)}- [hello world from mock](#hello-world-from-mock)
-            ${tocSpacing.repeat(3 - 1)}- [hello bob](#hello-bob)
+            ${tocSpacing.repeat(2 - 2)}- [hello kitty](#hello-kitty)
+            ${tocSpacing.repeat(2 - 2)}- [hello world from mock](#hello-world-from-mock)
+            ${tocSpacing.repeat(3 - 2)}- [hello bob](#hello-bob)
 
             <!--#endregion toc-->
 

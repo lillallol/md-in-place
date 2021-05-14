@@ -47,7 +47,7 @@ export function placeholders(md: string, parsedCommentsValidated: parsedComment[
     const template = templateStringsArray(md, parsedCommentsValidated);
 
     if (parsedStartTocComment !== undefined) {
-        const { indent } = parsedStartTocComment;
+        const { indent, collapse } = parsedStartTocComment;
         const mdToGenerateTocFrom: string = template
             .map((s, i) => {
                 const placeholder: null | undefined | string = placeholdersWithoutToc[i];
@@ -56,7 +56,7 @@ export function placeholders(md: string, parsedCommentsValidated: parsedComment[
             })
             .join("\n");
 
-        const generatedToc: string = generateToc(mdToGenerateTocFrom, indent);
+        const generatedToc: string = generateToc({ md: mdToGenerateTocFrom, indent, collapse });
 
         return placeholdersWithoutToc.map<string>((placeholder) => (placeholder === null ? generatedToc : placeholder));
     }

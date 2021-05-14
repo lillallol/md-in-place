@@ -1,4 +1,4 @@
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { parseCommentsFromMd } from "./parseCommentsFromMd";
 
 //@TODO this test does not test the full interface. This can bite really hard in the future

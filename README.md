@@ -4,30 +4,31 @@
 
 ## Table of contents
 
-<!--#region toc-->
+<!--#region toc collapse-->
 
-- [md-in-place](#md-in-place)
-    - [Table of contents](#table-of-contents)
-    - [Installation](#installation)
-    - [Description](#description)
-    - [Code coverage](#code-coverage)
-    - [Example](#example)
-    - [Documentation](#documentation)
-        - [Toc generation](#toc-generation)
-        - [File injection](#file-injection)
-        - [Links with relative paths](#links-with-relative-paths)
-        - [More on special comments](#more-on-special-comments)
-    - [Best practices](#best-practices)
-    - [Contributing](#contributing)
-        - [How it works](#how-it-works)
-        - [Limitations](#limitations)
-    - [Acknowledgments](#acknowledgments)
-    - [Changelog](#changelog)
-        - [0.2.0](#020)
-        - [0.1.0](#010)
-        - [0.0.1](#001)
-        - [0.0.0](#000)
-    - [License](#license)
+- [Table of contents](#table-of-contents)
+- [Installation](#installation)
+- [Description](#description)
+- [Code coverage](#code-coverage)
+- [Example](#example)
+- [Documentation](#documentation)
+    - [Toc generation](#toc-generation)
+    - [File injection](#file-injection)
+    - [Links with relative paths](#links-with-relative-paths)
+    - [More on special comments](#more-on-special-comments)
+- [Best practices](#best-practices)
+- [Contributing](#contributing)
+    - [How it works](#how-it-works)
+    - [Limitations](#limitations)
+- [FAQs](#faqs)
+- [Acknowledgments](#acknowledgments)
+- [Changelog](#changelog)
+    - [1.0.0](#100)
+    - [0.2.0](#020)
+    - [0.1.0](#010)
+    - [0.0.1](#001)
+    - [0.0.0](#000)
+- [License](#license)
 
 <!--#endregion toc-->
 
@@ -125,9 +126,8 @@ Testing code coverage is around 90%.
     
     <!--#region toc-->
     
-    - [Example](#example)
-        - [Table of contents](#table-of-contents)
-        - [Documentation](#documentation)
+    - [Table of contents](#table-of-contents)
+    - [Documentation](#documentation)
     
     <!--#endregion toc-->
     
@@ -160,7 +160,27 @@ Use:
 npx md-in-place --help
 ```
 
-to get information on how to use the CLI.
+to get the cli documentation:
+
+<!--#region cli-documentation !./cli-documentation.txt-->
+
+```txt
+CLI syntax:
+
+  md-in-place mdInPlace? [[--<option> | -<flag>] <value>]#
+
+Description:
+
+  Injects in place the provided github flavoured markdown, with file imports
+  and auto generated toc.
+
+Non required options:
+
+  -i --input : string = "./README.md"  Path to the markdown file.
+
+```
+
+<!--#endregion cli-documentation-->
 
 ### Toc generation
 
@@ -330,8 +350,6 @@ The markdown fragments are converted to html and together with the rest of the h
 -   Validation for:
 
     -   path of file to be imported
-    -   id of heading to be used in the generated toc
-    -   title of heading to be used in the generated toc
 
     is too strict. Open an issue so I can improve it.
 
@@ -354,11 +372,40 @@ The markdown fragments are converted to html and together with the rest of the h
 
     is parsed as two html fragments because of the line that separates them.
 
+## FAQs
+
+<details>
+<summary>Can you add a feature for collapsible toc?</summary>
+
+I have already written the code for such a feature, but I have disabled it. That is because the margins of such a toc are not uniform. If people still show interest I am willing to enable this feature.
+</details>
+
 ## Acknowledgments
 
 This program would not be possible without [remark](https://www.npmjs.com/package/remark) and [jsdom](https://www.npmjs.com/package/jsdom).
 
 ## Changelog
+
+### 1.0.0
+
+**breaking changes**
+
+-   Updated `fn-to-cli` version. That means that now instead of passing `"./path/to/markdown.md"`, you have to pass `"'./path/to/markdown.md'"`.
+
+**non breaking changes**
+
+-   Heading of depth 1 is not taken into account when generating the toc.
+-   HTML headings are now converted to ids for the toc, the same way markdown headings are.
+-   The program now works with headings with the same text.
+-   The program now allows any character in the headings text.
+
+**bug fixes**
+
+-   fixed a bug when converting heading text to id (white spaces were wrongly removed).
+
+**other**
+
+-   added documentation for the CLI in `README.md`
 
 ### 0.2.0
 

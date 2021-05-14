@@ -1,4 +1,5 @@
-import { parsedHeading } from "../types";
+import { parsedHeading, parsedHeadingWithIndex } from "../types";
+import { headingToId } from "./headingToId";
 import { htmlFragmentToParsedHeadings } from "./htmlFragmentToParsedHeadings";
 import { mdToAst } from "./mdToAst";
 import { mdToHtml } from "./mdToHtml";
@@ -15,7 +16,7 @@ import { mdToHtml } from "./mdToHtml";
  * ```
  * make it difficult to extract the id without converting it to html.
  */
-export function parseHeadingsFromMd(md: string): parsedHeading[] {
+export function parseHeadingsFromMd(md: string): parsedHeadingWithIndex[] {
     const toReturn: parsedHeading[] = [];
 
     mdToAst(md).children.forEach(
@@ -35,5 +36,10 @@ export function parseHeadingsFromMd(md: string): parsedHeading[] {
         }
     );
 
-    return toReturn;
+    return toReturn.map<parsedHeadingWithIndex>(({ title, depth }, i) => ({
+        depth,
+        title,
+        index: i,
+        id: headingToId({ textContent: title }),
+    }));
 }

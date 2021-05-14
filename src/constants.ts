@@ -9,9 +9,9 @@ export const constants: {
     readonly injectTocCommentEndValueRegExp: RegExp;
     readonly injectFileCommentStartValueRegExp: RegExp;
     readonly injectFileCommentEndValueRegExp: RegExp;
-    readonly headingIdRegExp: RegExp;
     readonly pathRegExp: RegExp;
     readonly keywordRegExp: RegExp;
+    readonly collapseKeyword : string;
 } = {
     get tocSpacing() {
         return "    ";
@@ -24,6 +24,9 @@ export const constants: {
     },
     get tocKeyword() {
         return "toc";
+    },
+    get collapseKeyword() {
+        return "collapse";
     },
     /**
      * @description
@@ -38,9 +41,6 @@ export const constants: {
      */
     get tocCommentEndRegExpSrc() {
         return `<!--${constants.commentEndKeyword} ${constants.tocKeyword}-->`;
-    },
-    get headingIdRegExp() {
-        return /^[a-zA-Z0-9-.]+$/;
     },
     /**
      * @description
@@ -59,7 +59,7 @@ export const constants: {
         return /[a-zA-Z-]+/;
     },
     get injectTocCommentStartValueRegExp(): RegExp {
-        return RegExp(`\\s*${constants.commentStartKeyword}\\s+${constants.tocKeyword}\\s*`, "s");
+        return RegExp(`\\s*${constants.commentStartKeyword}\\s+${constants.tocKeyword}\\s*(?<collapse>${constants.collapseKeyword})?\\s*`, "s");
     },
     get injectTocCommentEndValueRegExp(): RegExp {
         return RegExp(`\\s*${constants.commentEndKeyword}\\s+${constants.tocKeyword}\\s*`, "s");

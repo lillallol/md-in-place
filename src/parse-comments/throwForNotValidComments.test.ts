@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { errorMessages } from "../errorMessages";
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { parseCommentsFromMd } from "./parseCommentsFromMd";
 import { throwForNotValidComments } from "./throwForNotValidComments";
 

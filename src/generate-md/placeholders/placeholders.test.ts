@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { constants } from "../../constants";
-import { tagUnindent } from "../../es-utils/tagUnindent";
+import { tagUnindent } from "../../es-utils/index";
 import { parseCommentsFromMd } from "../../parse-comments/parseCommentsFromMd";
 import { placeholders } from "./placeholders";
 
@@ -36,10 +36,9 @@ describe(placeholders.name, () => {
         const parsedComments = parseCommentsFromMd(md, __dirname);
         // prettier-ignore
         expect(placeholders(md, parsedComments)).toEqual([
-            `${tocSpacing.repeat(1 - 1)}- [hello world](#hello-world)` + "\n" +
-            `${tocSpacing.repeat(2 - 1)}- [hello kitty](#hello-kitty)` + "\n" +
-            `${tocSpacing.repeat(2 - 1)}- [hello world from mock](#hello-world-from-mock)` + "\n" +
-            `${tocSpacing.repeat(3 - 1)}- [hello bob](#hello-bob)`
+            `${tocSpacing.repeat(2 - 2)}- [hello kitty](#hello-kitty)` + "\n" +
+            `${tocSpacing.repeat(2 - 2)}- [hello world from mock](#hello-world-from-mock)` + "\n" +
+            `${tocSpacing.repeat(3 - 2)}- [hello bob](#hello-bob)`
             ,
             mockMd,
         ]);

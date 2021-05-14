@@ -62,6 +62,14 @@ export function parseCommentsFromMd(md: string, absolutePathToFolderOfMd: string
                  */
                 if (tocStart !== null) {
                     const { indent } = getIndentForComment({ md, startOffset });
+                    const { groups } = tocStart;
+                    if (groups === undefined) throw Error(internalErrorMessages.internalLibraryError);
+                    const collapse: boolean = (() => {
+                        if (groups.collapse === undefined) return false;
+                        if (typeof groups.collapse === "string") return true;
+                        throw Error(internalErrorMessages.internalLibraryError);
+                    })();
+
                     toReturn.push(
                         new ParsedStartTocComment({
                             endOffset,
@@ -69,6 +77,7 @@ export function parseCommentsFromMd(md: string, absolutePathToFolderOfMd: string
                             keyword: "toc",
                             line,
                             indent,
+                            collapse,
                         })
                     );
                     return;

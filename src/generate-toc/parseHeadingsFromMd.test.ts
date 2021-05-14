@@ -1,5 +1,5 @@
-import { tagUnindent } from "../es-utils/tagUnindent";
-import { parsedHeading } from "../types";
+import { tagUnindent } from "../es-utils/index";
+import { parsedHeadingWithIndex } from "../types";
 import { parseHeadingsFromMd } from "./parseHeadingsFromMd";
 
 describe(parseHeadingsFromMd.name, () => {
@@ -29,27 +29,31 @@ describe(parseHeadingsFromMd.name, () => {
 
             <h4>bye bye</h4>
         `;
-        expect(parseHeadingsFromMd(md)).toEqual<parsedHeading[]>([
+        expect(parseHeadingsFromMd(md)).toEqual<parsedHeadingWithIndex[]>([
             {
-                number: 2,
-                id: "hello-world",
+                depth: 2,
                 title: "hello world",
+                id: "hello-world",
+                index: 0,
             },
             {
-                number: 3,
-                id: "my-id",
+                depth: 3,
                 title: "hello kitty",
+                id: "hello-kitty",
+                index: 1,
             },
             {
-                number: 3,
-                id: "hello-bob",
+                depth: 3,
                 title: "Hello Bob",
+                id: "hello-bob",
+                index: 2,
             },
             {
-                number : 4,
-                id : "bye-bye",
-                title : "bye bye"
-            }
+                depth: 4,
+                title: "bye bye",
+                id: "bye-bye",
+                index: 3,
+            },
         ]);
     });
 });

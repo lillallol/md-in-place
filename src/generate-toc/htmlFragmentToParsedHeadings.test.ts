@@ -1,6 +1,5 @@
-import { constants } from "../constants";
 import { errorMessages } from "../errorMessages";
-import { tagUnindent } from "../es-utils/tagUnindent";
+import { tagUnindent } from "../es-utils/index";
 import { parsedHeading } from "../types";
 import { htmlFragmentToParsedHeadings } from "./htmlFragmentToParsedHeadings";
 
@@ -18,12 +17,12 @@ describe(htmlFragmentToParsedHeadings.name, () => {
         `;
         const parsedHeadings = htmlFragmentToParsedHeadings(html);
         expect(parsedHeadings).toEqual<parsedHeading[]>([
-            { number: 1, id: "my-id", title: "heading 1" },
-            { number: 2, id: "heading-2", title: "heading 2" },
-            { number: 3, id: "my-heading-3", title: "My Heading 3" },
-            { number: 4, id: "my-heading-4", title: "My Heading 4" },
-            { number: 5, id: "my-heading-5", title: "My Heading 5" },
-            { number: 6, id: "my-heading-6", title: "My Heading 6" },
+            { depth: 1, title: "heading 1" },
+            { depth: 2, title: "heading 2" },
+            { depth: 3, title: "My Heading 3" },
+            { depth: 4, title: "My Heading 4" },
+            { depth: 5, title: "My Heading 5" },
+            { depth: 6, title: "My Heading 6" },
         ]);
     });
     it.each<
@@ -69,12 +68,6 @@ describe(htmlFragmentToParsedHeadings.name, () => {
         const html: string = tagUnindent`
             <h1>${id}</h1>
         `;
-        expect(() => htmlFragmentToParsedHeadings(html)).toThrow(
-            errorMessages.badHeadingIdPattern({
-                headingOuterHtml: html,
-                id,
-                headingIdRegExpSrc: constants.headingIdRegExp.source,
-            })
-        );
+        expect(() => htmlFragmentToParsedHeadings(html)).not.toThrow();
     });
 });

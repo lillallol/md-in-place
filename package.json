@@ -1,6 +1,6 @@
 {
     "name": "md-in-place",
-    "version": "0.2.0",
+    "version": "1.0.0",
     "bin": "bin/bin.js",
     "description": "CLI that enables toc generation and file imports for markdown files.",
     "main": "./dist/index.js",
@@ -14,7 +14,7 @@
         "test": "rm -rf ./coverage && npx jest --clearCache && npx jest ./src --coverage --silent",
         "build-ts": "tsc -p ./tsconfig.build.json",
         "build-bin": "rm -rf ./bin/bin.js && npx fn-to-cli",
-        "build-md": "ts-node ./src/example/build.ts; node ./bin/bin.js",
+        "build-md": "ts-node ./src/example/build.ts; node ./bin/bin.js --help > cli-documentation.txt;node ./bin/bin.js",
         "build": "rm -rf ./dist && npm run build-ts && npm run build-bin && npm run build-md",
         "pre-bump": "npm run dead-files && npm run spell-check && npm run lint && npm run test && npm run build && git add --all && git commit",
         "release": "npm run pre-bump && npm publish --access public && npm run after-bump",
@@ -68,7 +68,7 @@
         "unimported": "^1.10.0"
     },
     "dependencies": {
-        "fn-to-cli": "^1.0.0",
+        "fn-to-cli": "^2.0.3",
         "jsdom": "^16.5.3",
         "rehype-stringify": "^8.0.0",
         "remark": "^13.0.0",

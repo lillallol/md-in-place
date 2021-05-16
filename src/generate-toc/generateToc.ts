@@ -75,7 +75,7 @@ export function generateToc(_: {
     // if (!collapse) {
     return headingsWithoutDepth1Heading
         .map(({ title, depth, id }) => {
-            return `${indent}${tocSpacing.repeat(depth - minTocDepth)}- [${title}](#${id})`;
+            return `${indent}${tocSpacing.repeat(depth - minTocDepth)}- [${title.trim()}](#${id})`;
         })
         .join("\n");
     // }

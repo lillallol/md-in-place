@@ -7,7 +7,9 @@ describe(generateToc.name, () => {
         const md = tagUnindent`
             # hello world
 
-            <h2 id="my-id">hello kitty</h2>
+            <h2 id="my-id">
+            hello kitty
+            </h2>
 
             ## **[Hello Bob](./a/path/some/where)**
 

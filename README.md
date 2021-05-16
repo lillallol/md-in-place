@@ -23,6 +23,7 @@
 - [FAQs](#faqs)
 - [Acknowledgments](#acknowledgments)
 - [Changelog](#changelog)
+    - [1.0.1](#101)
     - [1.0.0](#100)
     - [0.2.0](#020)
     - [0.1.0](#010)
@@ -385,6 +386,12 @@ I have already written the code for such a feature, but I have disabled it. That
 This program would not be possible without [remark](https://www.npmjs.com/package/remark) and [jsdom](https://www.npmjs.com/package/jsdom).
 
 ## Changelog
+
+### 1.0.1
+
+**bug fixes**
+
+-   The text of the links in the toc have their trailing space characters removed, now. Not removing this white space was causing issues with prettier markdown formatter.
 
 ### 1.0.0
 
